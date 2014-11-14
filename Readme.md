@@ -1,8 +1,8 @@
-[![Build Status](https://circleci.com/gh/segmentio/integration-intercom.png)](https://circleci.com/gh/segmentio/integration-intercom)
+[![Build Status](https://circleci.com/gh/segmentio/integration-intercom/tree/master.png?style=badge)](https://circleci.com/gh/segmentio/integration-intercom/tree/master)
 
-# Intercom server-side integration.
+# integration-intercom
 
-Write me...
+Intercom server-side integration for Segment.
 
 
 ## License
