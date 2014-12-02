@@ -42,8 +42,7 @@ describe('Intercom', function(){
       .ensure('settings.apiKey')
       .ensure('settings.appId')
       .ensure('message.userId')
-      .channels(['server'])
-      .retries(2);
+      .channels(['server']);
   });
 
   describe('.validate()', function(){
