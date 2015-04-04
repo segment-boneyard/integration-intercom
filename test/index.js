@@ -9,6 +9,7 @@ var should = require('should');
 var assert = require('assert');
 var Intercom = require('..');
 var redis = require('redis');
+var formatTraits = require('../lib/intercom/format_traits');
 
 describe('Intercom', function(){
   var intercom;
@@ -71,6 +72,36 @@ describe('Intercom', function(){
       test.valid(msg, settings);
     });
   });
+
+  describe('formatTraits', function(){
+    it('should copy primitive values', function(){
+      var input = { trait1: 1, trait2: 'x' };
+      var expected = { trait1: 1, trait2: 'x' };
+
+      assert.deepEqual(formatTraits(input), expected);
+    });
+
+    it('should filter out empty objects', function(){
+      var input = { someTrait: {} };
+      var expected = {};
+
+      assert.deepEqual(formatTraits(input), expected);
+    });
+  });
+
+    it('should make arrays into strings', function(){
+      var input = { someObj: ['fish', 'cat'] };
+      var expected = { someObj: '"fish","cat"' };
+
+      assert.deepEqual(formatTraits(input), expected);
+    });
+
+    it('should make arrays with objects into strings', function(){
+      var input = { someObj: [{ animals: 'fish' }, { mammals: 'cat' } ] };
+      var expected = { someObj: '{"animals":"fish"},{"mammals":"cat"}' };
+
+      assert.deepEqual(formatTraits(input), expected);
+    });
 
   describe('mapper', function(){
     describe('identify', function(){

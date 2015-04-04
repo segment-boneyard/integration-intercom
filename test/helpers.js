@@ -161,12 +161,7 @@ exports.identify = function (options) {
       city        : 'San Francisco',
       state       : 'CA',
       phone       : '5555555555',
-      websites    : [
-        'http://calv.info',
-        'http://ianstormtaylor.com',
-        'http://ivolo.me',
-        'http://rein.pk'
-      ],
+      websites    : 'http://calv.info,http://ianstormtaylor.com,http://ivolo.me,http://rein.pk',
       bad     : null,
       alsoBad : undefined,
       met : (new Date()).toISOString(),
