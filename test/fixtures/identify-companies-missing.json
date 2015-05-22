@@ -4,7 +4,11 @@
     "userId": "user-id",
     "timestamp": "2014",
     "traits": {
-      "company": "Segment"
+      "companies": [{
+        "created": "2014-01-01",
+        "name": "Segment",
+        "id": "123"
+      }, true]
     }
   },
   "output": {
@@ -14,10 +18,13 @@
       "id": "user-id"
     },
     "companies": [{
+      "remote_created_at": 1388534400,
       "custom_attributes": {
-        "name": "Segment"
+        "created_at": 1388534400,
+        "name": "Segment",
+        "id": "123"
       },
-      "company_id": 2017828326,
+      "company_id": "123",
       "name": "Segment"
     }]
   }

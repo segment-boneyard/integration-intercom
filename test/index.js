@@ -94,8 +94,16 @@ describe('Intercom', function(){
         test.maps('identify-companies');
       });
 
+      it('should handle malformed companies', function(){
+        test.maps('identify-companies-missing');
+      });
+
       it('should map a company', function(){
         test.maps('identify-company');
+      });
+
+      it('should handle a malformed company', function(){
+        test.maps('identify-company-missing');
       });
     });
 
@@ -128,6 +136,7 @@ describe('Intercom', function(){
         custom_attributes: { name: 'Segment.io' },
         name: 'Segment.io'
       }];
+      delete payload.custom_attributes.company;
 
       test
         .set(settings)
@@ -196,7 +205,6 @@ describe('Intercom', function(){
       }];
       payload.companies[0].custom_attributes.id = input.groupId;
       payload.custom_attributes = {
-        companies: [payload.companies[0].custom_attributes],
         id: input.userId
       };
 

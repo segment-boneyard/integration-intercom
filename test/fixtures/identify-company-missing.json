@@ -4,7 +4,7 @@
     "userId": "user-id",
     "timestamp": "2014",
     "traits": {
-      "company": "Segment"
+      "company": true
     }
   },
   "output": {
@@ -12,13 +12,6 @@
     "last_request_at": 1388534400,
     "custom_attributes": {
       "id": "user-id"
-    },
-    "companies": [{
-      "custom_attributes": {
-        "name": "Segment"
-      },
-      "company_id": 2017828326,
-      "name": "Segment"
-    }]
+    }
   }
 }
