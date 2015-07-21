@@ -16,7 +16,7 @@
     "email": "jd@example.com",
     "metadata": {
       "email": "jd@example.com",
-      "property": true
+      "property": "true"
     }
   }
 }

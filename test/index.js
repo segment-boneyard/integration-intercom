@@ -41,34 +41,35 @@ describe('Intercom', function(){
       .endpoint('https://api-segment.intercom.io')
       .ensure('settings.apiKey')
       .ensure('settings.appId')
-      .ensure('message.userId')
       .channels(['server']);
   });
 
   describe('.validate()', function(){
-    var msg;
-
-    beforeEach(function(){
-      msg = { userId: 'user-id' };
-    });
 
     it('should be invalid if .appId is missing', function(){
       delete settings.appId;
-      test.invalid(msg, settings);
+      test.invalid({}, settings);
     });
 
     it('should be invalid if .apiKey is missing', function(){
       delete settings.apiKey;
-      test.invalid(msg, settings);
+      test.invalid({}, settings);
     });
 
-    it('should be invalid if .userId is missing', function(){
-      delete msg.userId;
-      test.invalid(msg, settings);
+    it('should be invalid if .userId and .email are missing', function(){
+      test.invalid({}, settings);
+    });
+
+    it('should be valid when just .userId is given', function(){
+      test.valid({ userId: '12345' }, settings);
+    });
+
+    it('should be valid when just .email is given', function(){
+      test.valid({ properties: { email: 'foo@bar.com' } }, settings);
     });
 
     it('should be valid when .apiKey and .appId are given', function(){
-      test.valid(msg, settings);
+      test.valid({ userId: '12345' }, settings);
     });
   });
 
