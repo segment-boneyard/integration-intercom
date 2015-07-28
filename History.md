@@ -1,4 +1,10 @@
 
+1.0.9 / 2015-07-28
+==================
+
+  * Improve success rate of messages by sending them according to the spec
+  * Update circle template
+
 1.0.8 / 2014-12-08
 ==================
 
