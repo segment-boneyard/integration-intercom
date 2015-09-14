@@ -98,6 +98,14 @@ describe('Intercom', function(){
       it('should map a company', function(){
         test.maps('identify-company');
       });
+
+      it('should map companies with remove', function(){
+        test.maps('identify-companies-remove');
+      });
+
+      it('should map a company with remove', function(){
+        test.maps('identify-company-remove');
+      });
     });
 
     describe('group', function(){
