@@ -106,6 +106,10 @@ describe('Intercom', function(){
       it('should map a company with remove', function(){
         test.maps('identify-company-remove');
       });
+
+      it('should update last_request_at with lastRequestAt when supplied', function(){
+        test.maps('identify-last-request-at');
+      });
     });
 
     describe('group', function(){
