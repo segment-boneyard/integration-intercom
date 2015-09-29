@@ -1,4 +1,10 @@
 
+1.0.11 / 2015-09-29
+===================
+
+  * Merge pull request #8 from segmentio/last-request-at
+  * last_request_at is now populated with passed in value if available.
+
 1.0.10 / 2015-09-25
 ===================
 
