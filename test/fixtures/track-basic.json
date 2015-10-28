@@ -6,7 +6,8 @@
     "timestamp": "2014",
     "properties": {
       "property": true,
-      "email": "jd@example.com"
+      "email": "jd@example.com",
+      "revenue": 2999
     }
   },
   "output": {
@@ -16,7 +17,11 @@
     "email": "jd@example.com",
     "metadata": {
       "email": "jd@example.com",
-      "property": "true"
+      "property": "true",
+      "price": {
+        "amount": 2999,
+        "currency": "usd"
+      }
     }
   }
 }
