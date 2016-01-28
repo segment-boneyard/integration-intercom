@@ -19,7 +19,7 @@
       "email": "jd@example.com",
       "property": "true",
       "price": {
-        "amount": 2999,
+        "amount": 299900,
         "currency": "usd"
       }
     }
