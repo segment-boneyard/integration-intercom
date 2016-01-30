@@ -1,4 +1,9 @@
 
+1.0.14 / 2016-01-30
+===================
+
+  * update to send revenue as cents per Intercom docs
+
 1.0.13 / 2016-01-30
 ===================
 
