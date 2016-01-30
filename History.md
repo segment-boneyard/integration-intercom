@@ -1,4 +1,9 @@
 
+1.0.13 / 2016-01-30
+===================
+
+  * Update revenue to be sent in cents per Intercom expectations
+
 1.0.12 / 2015-10-28
 ===================
 
