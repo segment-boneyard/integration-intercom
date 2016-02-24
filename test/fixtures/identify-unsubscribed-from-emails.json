@@ -9,7 +9,7 @@
       "firstName": "john",
       "lastName": "doe"
     },
-    "context": {
+    "integrations": {
       "Intercom": {
         "unsubscribedFromEmails": true
       }
