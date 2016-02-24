@@ -1,4 +1,9 @@
 
+1.0.15 / 2016-02-24
+===================
+
+  * add support for unsubscribing users from email
+
 1.0.14 / 2016-01-30
 ===================
 
