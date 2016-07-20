@@ -27,7 +27,8 @@ describe('Intercom', function(){
     payload = {};
     settings = {
       appId: 'a3vy8ufv',
-      apiKey: '4ed539b9c0193de8e75bcb00a357cac54db90902'
+      apiKey: '4ed539b9c0193de8e75bcb00a357cac54db90902',
+      collectContext: false
     };
     intercom = new Intercom(settings);
     test = Test(intercom, __dirname);
@@ -81,6 +82,11 @@ describe('Intercom', function(){
 
       it('should map basic context', function(){
         test.maps('identify-context');
+      });
+
+      it('should map additional context if collectContext', function () {
+        settings.collectContext = true;
+        test.maps('identify-collect-context')
       });
 
       it('should respect .active()', function(){
