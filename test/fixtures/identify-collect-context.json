@@ -38,7 +38,14 @@
       "email": "jd@example.com",
       "firstName": "john",
       "lastName": "doe",
-      "id": "user-id"
+      "id": "user-id",
+      "device_type": "ios",
+      "device_manufacturer": "Apple",
+      "device_model": "iPhone8,2",
+      "os_name": "iPhone OS",
+      "os_version": "9.3.2",
+      "app_name": "Pokemon Go",
+      "app_version": "1.1.1"
     }
   }
 }
