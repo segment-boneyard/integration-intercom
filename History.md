@@ -1,4 +1,9 @@
 
+1.0.16 / 2016-07-20
+===================
+
+  * add option to pass specific context info as custom attributes on Identify
+
 1.0.15 / 2016-02-24
 ===================
 
