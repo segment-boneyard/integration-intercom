@@ -26,10 +26,8 @@
       "firstName": "john",
       "lastName": "doe",
       "id": "user-id",
-      "race": {
-        "finish_at": 1388620800,
-        "start_at":  1388534400
-      }
+      "race.finish_at": 1388620800,
+      "race.start_at": 1388534400
     }
   }
 }

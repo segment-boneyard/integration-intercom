@@ -139,16 +139,19 @@ describe('Intercom', function(){
     it('should be able to identify correctly', function(done){
       var msg = helpers.identify();
 
+      var traits = intercom.formatTraits(msg.traits());
+      delete traits.company;
+
       payload.user_id = msg.userId();
       payload.remote_created_at = time(msg.created());
       payload.last_request_at = time(msg.timestamp());
       payload.last_seen_ip = msg.ip();
       payload.email = msg.email();
       payload.name = msg.name();
-      payload.custom_attributes = intercom.formatTraits(msg.traits());
+      payload.custom_attributes = traits;
       payload.companies = [{
         company_id: hash('Segment.io'),
-        custom_attributes: { name: 'Segment.io' },
+        custom_attributes: {},
         name: 'Segment.io'
       }];
 
@@ -208,18 +211,20 @@ describe('Intercom', function(){
       var input = test.fixture('group-basic').input;
       input.traits.created_at = time(new Date(input.traits.created_at));
 
+      var name = input.traits.name;
+      delete input.traits.name;
+
       var payload = {};
       payload.user_id = input.userId;
       payload.last_request_at = time(input.timestamp);
       payload.companies = [{
         company_id: input.groupId,
         custom_attributes: input.traits,
-        name: input.traits.name,
+        name: name,
         remote_created_at: input.traits.created_at
       }];
-      payload.companies[0].custom_attributes.id = input.groupId;
+
       payload.custom_attributes = {
-        companies: [payload.companies[0].custom_attributes],
         id: input.userId
       };
 

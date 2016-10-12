@@ -17,6 +17,7 @@
     "extend": "^2.0.0",
     "is": "^2.1.0",
     "isostring": "0.0.1",
+    "flat": "2.0.1",
     "obj-case": "^0.1.1",
     "segmentio-facade": "^2.0.5",
     "segmentio-integration": "^5.0.1",

@@ -14,15 +14,10 @@
     "user_id": "user-id",
     "last_request_at": 1388534400,
     "custom_attributes": {
-      "company": {
-          "name": "Segment",
-          "remove": true
-      },
       "id": "user-id"
     },
     "companies": [{
       "custom_attributes": {
-        "name": "Segment",
         "remove": true
       },
       "company_id": 2017828326,
