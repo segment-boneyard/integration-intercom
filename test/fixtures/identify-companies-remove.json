@@ -16,20 +16,12 @@
     "user_id": "user-id",
     "last_request_at": 1388534400,
     "custom_attributes": {
-      "companies": [{
-        "created_at": 1388534400,
-        "name": "Segment",
-        "id": "123",
-        "remove": true
-      }],
       "id": "user-id"
     },
     "companies": [{
       "remote_created_at": 1388534400,
       "custom_attributes": {
         "created_at": 1388534400,
-        "name": "Segment",
-        "id": "123",
         "remove": true
       },
       "company_id": "123",
