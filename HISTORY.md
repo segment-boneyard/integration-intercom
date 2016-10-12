@@ -1,4 +1,10 @@
 
+1.0.17 / 2016-10-12
+===================
+
+  * flatten custom attrs and remove redundant company fields in custom attrs
+  * Update segmentio-integration to v5 (#23)
+
 1.0.16 / 2016-07-20
 ===================
 
