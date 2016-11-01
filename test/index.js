@@ -9,6 +9,7 @@ var should = require('should');
 var assert = require('assert');
 var Intercom = require('..');
 var redis = require('redis');
+var uid = require('uid');
 
 describe('Intercom', function(){
   var intercom;
@@ -26,8 +27,8 @@ describe('Intercom', function(){
   beforeEach(function(){
     payload = {};
     settings = {
-      appId: 'a3vy8ufv',
-      apiKey: '4ed539b9c0193de8e75bcb00a357cac54db90902',
+      appId: 'fcxywseo',
+      apiKey: '9d068fa090d38be4c715b669b3f1370f76ac5306',
       collectContext: false
     };
     intercom = new Intercom(settings);
@@ -84,7 +85,7 @@ describe('Intercom', function(){
         test.maps('identify-context');
       });
 
-      it('should map additional context if collectContext', function () {
+      it('should map additional context if collectContext', function(){
         settings.collectContext = true;
         test.maps('identify-collect-context')
       });
@@ -130,7 +131,7 @@ describe('Intercom', function(){
 
     describe('track', function(){
       it('should map basic track', function(){
-        test.maps('track-basic');
+        test.maps('track-job-new');
       });
     });
   });
@@ -251,14 +252,112 @@ describe('Intercom', function(){
   })
 
   describe('.track()', function(){
-    it('should track', function(done){
-      var json = test.fixture('track-basic');
+    // Create one persistent unique user to properly test locking logic
+    // And prevent tests failing because key locked from previous test runs
+    // Allows us to run make test more than once within 15 minutes.
+    var userId;
+    beforeEach(function(done){
+      // Make a quick `.identify()` call with the userId so Intercom will
+      // accept the subsequent `.track()` calls
+      userId = uid();
+      var userRequest = {
+        type: 'identify',
+        timestamp: '2016',
+        userId: userId,
+        traits: { created: '2016' }
+      };
       test
+        .request(0)
         .set(settings)
-        .track(json.input)
-        .sends(json.output)
-        .expects(202)
+        .identify(userRequest)
+        .expects(200)
         .end(done);
+    });
+
+    describe('#new job', function(){
+      it('should create new job for track', function(done){
+        var json = test.fixture('track-job-new');
+        json.input.userId = userId;
+        json.output.items[0].data.user_id = userId;
+
+        test
+          .request(1) // second req after beforeEach
+          .set(settings)
+          .track(json.input)
+          .sends(json.output)
+          .expects(200)
+          .end(done);
+      });
+    });
+
+    describe('#job logic', function(){
+      var jobId;
+
+      beforeEach(function(done){
+        // Make the job first to so we can test against a specific jobId
+        var json = test.fixture('track-job-new');
+        json.input.userId = userId;
+        json.output.items[0].data.user_id = userId;
+
+        test
+          .request(1) // second req after top level beforeEach
+          .set(settings)
+          .track(json.input)
+          .sends(json.output)
+          .expects(200)
+          .end(function(err, res){
+            if (err) return done(err);
+            jobId = res[0].res.body.id;
+            done();
+          });
+      });
+
+      describe('#adding', function(){
+        it('should add to job if already exists', function(done){
+          var json = test.fixture('track-job-existing');
+          json.input.userId = userId;
+          json.output.items[0].data.user_id = userId;
+          json.output.job = { id: jobId };
+
+          test
+            .request(2) // account for `.identify()` and `.track()` in the beforeEach
+            .set(settings)
+            .track(json.input)
+            .sends(json.output)
+            .expects(200)
+            .end(done);
+        });
+      });
+
+      describe('#retrying', function(){
+        it('should just create a new job if adding to a job fails', function(done){
+          var json = test.fixture('track-job-existing');
+          json.input.userId = userId;
+          json.output.items[0].data.user_id = userId;
+
+          // Modify valid jobId stored in redis to be invalid
+          var jobKey = [settings.appId, 'jobs', userId].join(':');
+          intercom.redis().set(jobKey, 'garbage_id', function(err, ok){
+            if (err) return done(err);
+            var bulkRequests = test
+              .requests(4) // add the identify request from beforeEach
+              .set(settings)
+              .track(json.input);
+
+            // First Request
+            bulkRequests
+              .request(2)
+              .expects(500); // TODO: is this expected? Why is this not 4xx?
+
+            // Retry by creating new job
+            bulkRequests
+              .request(3)
+              .sends(json.output)
+              .expects(200)
+              .end(done);
+          });
+        });
+      });
     });
 
     it('should error on invalid creds', function(done){
