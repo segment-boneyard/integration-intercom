@@ -199,56 +199,121 @@ describe('Intercom', function(){
   });
 
   describe('.group()', function(){
-    it('should be able to group correctly', function(done){
-      var group = test.fixture('group-basic');
-      test.group(group.input);
-      test.requests(2);
-      test
-        .set(settings)
-        .request(0)
-        .sends(group.output)
-        .expects(200);
+    // Create one persistent unique user to properly test locking logic
+    // And prevent tests failing because key locked from previous test runs
+    // Allows us to run make test more than once within 15 minutes.
+    var userId;
+    beforeEach(function(){
+      userId = uid();
+    });
 
-      var input = test.fixture('group-basic').input;
-      input.traits.created_at = time(new Date(input.traits.created_at));
+    describe('#new job', function(){
+      it('should create a new job for group', function(done){
+        var json = test.fixture('group-job-new');
+        json.input.userId = userId;
+        json.output.items[0].data.user_id = userId;
 
-      var name = input.traits.name;
-      delete input.traits.name;
+        test
+          .set(settings)
+          .group(json.input)
+          .sends(json.output)
+          .expects(202)
+          .end(done);
+      });
 
-      var payload = {};
-      payload.user_id = input.userId;
-      payload.last_request_at = time(input.timestamp);
-      payload.companies = [{
-        company_id: input.groupId,
-        custom_attributes: input.traits,
-        name: name,
-        remote_created_at: input.traits.created_at
-      }];
+      it('should work with .created_at', function(done){
+        var json = test.fixture('group-job-created_at');
+        json.input.userId = userId;
+        json.output.items[0].data.user_id = userId;
 
-      payload.custom_attributes = {
-        id: input.userId
-      };
+        test
+          .set(settings)
+          .group(json.input)
+          .sends(json.output)
+          .expects(202)
+          .end(done);
+      });
 
-      test
-        .request(1)
-        .sends(payload)
-        .expects(200);
+      it('should work with .createdAt', function(done){
+        var json = test.fixture('group-job-createdAt');
+        json.input.userId = userId;
+        json.output.items[0].data.user_id = userId;
 
-      test.end(done);
-    })
+        test
+          .set(settings)
+          .group(json.input)
+          .sends(json.output)
+          .expects(202)
+          .end(done);
+      });
+    });
 
-    it('should work with .created_at', function(done){
-      var traits = { created_at: 'Jan 1, 2000 3:32:33 PM', name: 'old company' };
-      var group = helpers.group({ traits: traits, groupId: 'a5322d6' });
-      delete group.obj.traits.created;
-      intercom.group(group, done);
-    })
+    describe('#job logic', function(){
+      var jobId;
 
-    it('should work with .created', function(done){
-      var traits = { created: 'Jan 1, 2014 3:32:33 PM', name: 'new company' };
-      var group = helpers.group({ traits: traits, groupId: 'e186e5de' });
-      intercom.group(group, done);
-    })
+      beforeEach(function(done){
+        // Make the job first to so we can test against a specific jobId
+        var json = test.fixture('group-job-new');
+        json.input.userId = userId;
+        json.output.items[0].data.user_id = userId;
+
+        test
+          .request(0)
+          .set(settings)
+          .group(json.input)
+          .sends(json.output)
+          .expects(202)
+          .end(function(err, res){
+            if (err) return done(err);
+            jobId = res[0].res.body.id;
+            done();
+          });
+      });
+
+      it('should add to job if already exists', function(done){
+        var json = test.fixture('group-job-existing');
+        json.input.userId = userId;
+        json.output.items[0].data.user_id = userId;
+        json.output.job = { id: jobId };
+
+        test
+          .request(1) // account for test in beforeEach
+          .set(settings)
+          .group(json.input)
+          .sends(json.output)
+          .expects(202)
+          .end(done);
+      });
+
+      it('should just create a new job if adding to a job fails', function(done){
+        var json = test.fixture('group-job-existing');
+        json.input.userId = userId;
+        json.output.items[0].data.user_id = userId;
+
+        // Modify valid jobId stored in redis to be invalid
+        var jobKey = [settings.appId, 'jobs', 'users', userId].join(':');
+        intercom.redis().set(jobKey, 'garbage_id', function(err, ok){
+          if (err) return done(err);
+
+          var bulkRequests = test
+            .requests(3)
+            .set(settings)
+            .group(json.input);
+
+          // Request for garbage_id
+          bulkRequests
+            .request(1)
+            .expects(500); // This is the expected status code
+
+          // Retry by creating new job
+          bulkRequests
+            .request(2)
+            .sends(json.output)
+            .expects(202)
+            .end(done);
+        });
+      });
+    });
   })
 
   describe('.track()', function(){
@@ -266,6 +331,7 @@ describe('Intercom', function(){
         userId: userId,
         traits: { created: '2016' }
       };
+
       test
         .request(0)
         .set(settings)
@@ -285,7 +351,7 @@ describe('Intercom', function(){
           .set(settings)
           .track(json.input)
           .sends(json.output)
-          .expects(200)
+          .expects(202)
           .end(done);
       });
     });
@@ -304,7 +370,7 @@ describe('Intercom', function(){
           .set(settings)
           .track(json.input)
           .sends(json.output)
-          .expects(200)
+          .expects(202)
           .end(function(err, res){
             if (err) return done(err);
             jobId = res[0].res.body.id;
@@ -324,7 +390,7 @@ describe('Intercom', function(){
             .set(settings)
             .track(json.input)
             .sends(json.output)
-            .expects(200)
+            .expects(202)
             .end(done);
         });
       });
@@ -336,7 +402,7 @@ describe('Intercom', function(){
           json.output.items[0].data.user_id = userId;
 
           // Modify valid jobId stored in redis to be invalid
-          var jobKey = [settings.appId, 'jobs', userId].join(':');
+          var jobKey = [settings.appId, 'jobs', 'events', userId].join(':');
           intercom.redis().set(jobKey, 'garbage_id', function(err, ok){
             if (err) return done(err);
             var bulkRequests = test
@@ -344,16 +410,16 @@ describe('Intercom', function(){
               .set(settings)
               .track(json.input);
 
-            // First Request
+            // Request for garbage_id
             bulkRequests
               .request(2)
-              .expects(500); // TODO: is this expected? Why is this not 4xx?
+              .expects(500); // This is the expected error status code
 
             // Retry by creating new job
             bulkRequests
               .request(3)
               .sends(json.output)
-              .expects(200)
+              .expects(202)
               .end(done);
           });
         });
