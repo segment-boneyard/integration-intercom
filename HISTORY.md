@@ -1,5 +1,10 @@
 
-2.0.0 / 2016-11-03
+2.1.0 / 2016-11-14
+===================
+
+  * Remove redudant traits that were mapped semantically already for identify calls 
+
+2.0.0 / 2016-11-07
 ===================
 
   * Migrate `.track()` and `.group()` calls to use Intercom's Bulk API
