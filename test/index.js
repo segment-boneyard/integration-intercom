@@ -164,7 +164,6 @@ describe('Intercom', function(){
       payload.custom_attributes = traits;
       payload.companies = [{
         company_id: hash('Segment.io'),
-        custom_attributes: {},
         name: 'Segment.io'
       }];
 

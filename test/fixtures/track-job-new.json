@@ -6,7 +6,8 @@
     "properties": {
       "order_id": "12345",
       "name": "frappe",
-      "revenue": 2999
+      "revenue": 2999,
+      "email": "hansolo@han.com"
     }
   },
   "output": {
@@ -16,7 +17,9 @@
       "data": {
         "event_name": "Watched Rick and Morty",
         "created_at": 1451606400,
+        "email": "hansolo@han.com",
         "metadata": {
+          "email": "hansolo@han.com",
           "order_id": "12345",
           "name": "frappe",
           "price": {
