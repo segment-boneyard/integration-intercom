@@ -1,18 +1,18 @@
 
-var facade = require('segmentio-facade');
-var merge = require('merge-util');
-var join = require('path').join;
-var assert = require('assert');
-var uid = require('uid');
+var facade = require('segmentio-facade')
+var merge = require('merge-util')
+var join = require('path').join
+var assert = require('assert')
+var uid = require('uid')
 
 /**
  * Create our testing variables
  */
 
-var firstId  = uid();
-var secondId = uid();
-var groupId  = uid();
-var email = 'testing-' + firstId + '@segment.io';
+var firstId = uid()
+var secondId = uid()
+var groupId = uid()
+var email = 'testing-' + firstId + '@segment.io'
 
 /**
  * Mapper tester.
@@ -21,24 +21,24 @@ var email = 'testing-' + firstId + '@segment.io';
  * @return {Function}
  */
 
-exports.mapper = function(dirname){
-  assert(dirname, '__dirname must be supplied');
-  dirname = join(dirname, 'fixtures');
-  return function(integration){
-    integration.fixture = function(name, settings){
-      var dir = join(dirname, name + '.json');
-      var json = require(dir);
-      var input = json.input;
-      var output = json.output;
-      var type = input.type[0].toUpperCase() + input.type.slice(1);
-      var Type = facade[type];
-      var map = integration.mapper[input.type];
-      var mapped = map.call(integration, new Type(input), settings || {});
-      mapped = JSON.parse(JSON.stringify(mapped)); // dates
-      mapped.should.eql(output);
-    };
-  };
-};
+exports.mapper = function (dirname) {
+  assert(dirname, '__dirname must be supplied')
+  dirname = join(dirname, 'fixtures')
+  return function (integration) {
+    integration.fixture = function (name, settings) {
+      var dir = join(dirname, name + '.json')
+      var json = require(dir)
+      var input = json.input
+      var output = json.output
+      var type = input.type[0].toUpperCase() + input.type.slice(1)
+      var Type = facade[type]
+      var map = integration.mapper[input.type]
+      var mapped = map.call(integration, new Type(input), settings || {})
+      mapped = JSON.parse(JSON.stringify(mapped)) // dates
+      mapped.should.eql(output)
+    }
+  }
+}
 
 /**
  * Create ecommerce transaction.
@@ -47,11 +47,11 @@ exports.mapper = function(dirname){
  * @return {Track}
  */
 
-exports.transaction = function(options){
+exports.transaction = function (options) {
   return new facade.Track(merge({
     userId: firstId,
     channel: 'server',
-    timestamp: new Date,
+    timestamp: new Date(),
     event: 'Completed Order',
     properties: {
       orderId: 't-39a224df',
@@ -76,8 +76,8 @@ exports.transaction = function(options){
       ip: '4.184.68.0',
       userAgent: 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)'
     }
-  }, options));
-};
+  }, options))
+}
 
 /**
  * Create a track call merged from `options`
@@ -87,43 +87,43 @@ exports.transaction = function(options){
  */
 
 exports.track = function (options) {
-  options = options || {};
+  options = options || {}
   return new facade.Track(merge({
-    userId     : firstId,
-    event      : 'Baked a cake',
-    properties : {
-      layers  : ['chocolate', 'strawberry', 'fudge'],
-      revenue : 19.95,
-      numLayers : 10,
-      fat : 0.02,
-      bacon : '1',
-      date : (new Date()).toISOString(),
-      address : {
-        state : 'CA',
-        zip  : 94107,
-        city : 'San Francisco'
+    userId: firstId,
+    event: 'Baked a cake',
+    properties: {
+      layers: ['chocolate', 'strawberry', 'fudge'],
+      revenue: 19.95,
+      numLayers: 10,
+      fat: 0.02,
+      bacon: '1',
+      date: (new Date()).toISOString(),
+      address: {
+        state: 'CA',
+        zip: 94107,
+        city: 'San Francisco'
       }
     },
-    channel    : 'server',
-    timestamp  : new Date(),
-    options : {
-      traits : {
-        email   : options.email || email,
-        age     : 23,
-        created : new Date(),
-        bad     : null,
-        alsoBad : undefined,
-        address : {
-          state : 'CA',
-          zip  : 94107,
-          city : 'San Francisco'
+    channel: 'server',
+    timestamp: new Date(),
+    options: {
+      traits: {
+        email: options.email || email,
+        age: 23,
+        created: new Date(),
+        bad: null,
+        alsoBad: undefined,
+        address: {
+          state: 'CA',
+          zip: 94107,
+          city: 'San Francisco'
         }
       },
-      ip : '4.184.68.0',
+      ip: '4.184.68.0',
       userAgent: 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)'
     }
-  }, options));
-};
+  }, options))
+}
 
 /**
  * Create a bare track call merged from `options`
@@ -132,14 +132,13 @@ exports.track = function (options) {
  * @return {Track}
  */
 
-
 exports.track.bare = function (options) {
   return new facade.Track(merge({
-    userId  : 'aaa',
-    event   : 'Bear tracks',
-    channel : 'server'
-  }, options || {}));
-};
+    userId: 'aaa',
+    event: 'Bear tracks',
+    channel: 'server'
+  }, options || {}))
+}
 
 /**
  * Create an identify call merged from `options`
@@ -149,31 +148,31 @@ exports.track.bare = function (options) {
  */
 
 exports.identify = function (options) {
-  options = options || {};
+  options = options || {}
   return new facade.Identify(merge({
-    userId : firstId,
-    traits : {
-      fat         : 0.02,
-      firstName   : 'John',
-      'Last Name' : 'Doe',
-      email       : options.email || email,
-      company     : 'Segment.io',
-      city        : 'San Francisco',
-      state       : 'CA',
-      phone       : '5555555555',
-      bad     : null,
-      alsoBad : undefined,
-      met : (new Date()).toISOString(),
-      created : new Date('1/12/2013')
+    userId: firstId,
+    traits: {
+      fat: 0.02,
+      firstName: 'John',
+      'Last Name': 'Doe',
+      email: options.email || email,
+      company: 'Segment.io',
+      city: 'San Francisco',
+      state: 'CA',
+      phone: '5555555555',
+      bad: null,
+      alsoBad: undefined,
+      met: (new Date()).toISOString(),
+      created: new Date('1/12/2013')
     },
-    context : {
-      ip : '12.212.12.49',
+    context: {
+      ip: '12.212.12.49',
       userAgent: 'Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Trident/6.0)'
     },
-    timestamp : new Date(),
-    channel : 'server'
-  }, options));
-};
+    timestamp: new Date(),
+    channel: 'server'
+  }, options))
+}
 
 /**
  * Create a page call merged from `options`
@@ -182,7 +181,7 @@ exports.identify = function (options) {
  * @return {Page}
  */
 
-exports.page = function(options){
+exports.page = function (options) {
   return new facade.Page(merge({
     userId: firstId,
     name: 'Docs',
@@ -194,10 +193,10 @@ exports.page = function(options){
     context: {
       ip: '12.212.12.49'
     },
-    timestamp: new Date,
+    timestamp: new Date(),
     channel: 'server'
-  }, options || {}));
-};
+  }, options || {}))
+}
 
 /**
  * Create a screen call merged from `options`
@@ -206,7 +205,7 @@ exports.page = function(options){
  * @return {Page}
  */
 
-exports.screen = function(options){
+exports.screen = function (options) {
   return new facade.Screen(merge({
     userId: firstId,
     name: 'Login',
@@ -217,10 +216,10 @@ exports.screen = function(options){
     context: {
       ip: '12.212.12.49'
     },
-    timestamp: new Date,
+    timestamp: new Date(),
     channel: 'server'
-  }, options || {}));
-};
+  }, options || {}))
+}
 
 /**
  * Create a group call merged from `options`
@@ -229,7 +228,7 @@ exports.screen = function(options){
  * @return {Group}
  */
 
-exports.group = function(options){
+exports.group = function (options) {
   return new facade.Group(merge({
     groupId: groupId,
     userId: firstId,
@@ -239,15 +238,15 @@ exports.group = function(options){
       state: 'CA',
       city: 'San Francisco',
       created: new Date('2/1/2014'),
-      plan: 'Enterprise',
+      plan: 'Enterprise'
     },
     context: {
       ip: '12.212.12.49'
     },
-    timestamp: new Date,
+    timestamp: new Date(),
     channel: 'server'
-  }, options || {}));
-};
+  }, options || {}))
+}
 
 /**
  * Create an alias call merged from `options`
@@ -258,9 +257,9 @@ exports.group = function(options){
 
 exports.alias = function (options) {
   return new facade.Alias(merge({
-    from      : firstId,
-    to        : secondId,
-    channel   : 'server',
-    timestamp : new Date()
-  }, options || {}));
-};
+    from: firstId,
+    to: secondId,
+    channel: 'server',
+    timestamp: new Date()
+  }, options || {}))
+}

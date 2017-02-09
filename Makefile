@@ -1,4 +1,3 @@
-ESLINT := node_modules/.bin/eslint
 MOCHA := node_modules/.bin/mocha
 
 TESTS = $(wildcard test/*.js)
@@ -20,11 +19,11 @@ install: node_modules
 .PHONY: install
 
 lint: install
-	@$(ESLINT) .
+	./node_modules/.bin/standard
 .PHONY: lint
 
 fmt: install
-	@$(ESLINT) --fix .
+	./node_modules/.bin/standard --fix
 .PHONY: fmt
 
 test: install
