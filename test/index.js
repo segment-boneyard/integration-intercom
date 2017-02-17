@@ -29,7 +29,14 @@ describe('Intercom', function(){
     settings = {
       appId: 'fcxywseo',
       apiKey: '9d068fa090d38be4c715b669b3f1370f76ac5306',
-      collectContext: false
+      collectContext: false,
+      blacklisted: {
+        stringifyMe: 'stringify',
+        dropMe: 'drop',
+        flattenMe: 'flatten'
+      },
+      defaultMethod: 'flatten',
+      richLinkProperties: []
     };
     intercom = new Intercom(settings);
     test = Test(intercom, __dirname);
@@ -153,6 +160,11 @@ describe('Intercom', function(){
       it('should map nested track', function(){
         test.maps('track-nested');
       });
+
+      it('should send Rich Link as nested object in metadata', function() {
+        settings.richLinkProperties = ['article'];
+        test.maps('track-rich-link');
+      });
     });
   });
 
@@ -188,6 +200,94 @@ describe('Intercom', function(){
 
     it('should still send identify with nested traits', function(done){
       var json = test.fixture('identify-nested');
+
+      test
+        .set(settings)
+        .identify(json.input)
+        .sends(json.output)
+        .expects(200)
+        .end(done);
+    });
+
+    it('should selectively stringify, flatten, or drop traits', function(done){
+      intercom.settings.blacklisted = {
+        stringifyMe: 'stringify',
+        dropMe: 'drop',
+        flattenMe: 'flatten'
+      }
+
+      var json = test.fixture('identify-blacklist');
+
+      test
+        .set(settings)
+        .identify(json.input)
+        .sends(json.output)
+        .expects(200)
+        .end(done);
+    });
+
+    it('should let you set stringify as the default method for handling nested objects', function(done){
+      settings.defaultMethod = 'stringify';
+      var json = test.fixture('identify-default-method');
+      json.output.custom_attributes = {
+        foo: '["yo","hello",{"yolo":"hi"}]',
+        id: 'nesty1820'
+      };
+
+      test
+        .set(settings)
+        .identify(json.input)
+        .sends(json.output)
+        .expects(200)
+        .end(done);
+      
+    });
+
+    it('should let you set drop as the default method for handling nested objects', function(done) {
+      var json = test.fixture('identify-default-method');
+      intercom.settings.defaultMethod = 'drop';
+      json.output.custom_attributes = {
+        id: 'nesty1820'
+      };
+
+      test
+        .set(settings)
+        .identify(json.input)
+        .sends(json.output)
+        .expects(200)
+        .end(done);
+    });
+
+    it('should let you set flatten as the default method for handling nested objects', function(done) {
+      var json = test.fixture('identify-default-method');
+      intercom.settings.defaultMethod = 'flatten';
+      json.output.custom_attributes = {
+        'foo.0': 'yo',
+        'foo.1': 'hello',
+        'foo.2.yolo': 'hi',
+        id: 'nesty1820'
+      };
+
+      test
+        .set(settings)
+        .identify(json.input)
+        .sends(json.output)
+        .expects(200)
+        .end(done);
+    });
+
+    it('should only handle objects with the default method', function(done) {
+      var json = test.fixture('identify-default-method');
+      intercom.settings.defaultMethod = 'drop';
+      json.input.traits = {
+        test_number: 12345,
+        test_string: 'test'
+      };
+      json.output.custom_attributes = {
+        test_number: 12345,
+        test_string: 'test',
+        id: 'nesty1820'
+      };
 
       test
         .set(settings)
@@ -267,6 +367,19 @@ describe('Intercom', function(){
 
       it('should create a new job for group with nested traits', function(done){
         var json = test.fixture('group-nested');
+        json.input.userId = userId;
+        json.output.items[0].data.user_id = userId;
+
+        test
+          .set(settings)
+          .group(json.input)
+          .sends(json.output)
+          .expects(202)
+          .end(done);
+      });
+
+      it('should selectively stringify, flatten, or drop traits', function(done){
+        var json = test.fixture('group-blacklist');
         json.input.userId = userId;
         json.output.items[0].data.user_id = userId;
 
@@ -414,6 +527,20 @@ describe('Intercom', function(){
 
       it('should create new job for track with nested props', function(done){
         var json = test.fixture('track-nested');
+        json.input.userId = userId;
+        json.output.items[0].data.user_id = userId;
+
+        test
+          .request(1) // second req after beforeEach
+          .set(settings)
+          .track(json.input)
+          .sends(json.output)
+          .expects(202)
+          .end(done);
+      });
+
+      it('should selectively stringify, flatten, or drop traits', function(done){
+        var json = test.fixture('track-blacklist');
         json.input.userId = userId;
         json.output.items[0].data.user_id = userId;
 
