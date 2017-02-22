@@ -29,6 +29,9 @@ describe('Intercom', function(){
     settings = {
       appId: 'fcxywseo',
       apiKey: '9d068fa090d38be4c715b669b3f1370f76ac5306',
+      oauth: {
+        'access-token': 'ACCESSTOKENHERE'
+      },
       collectContext: false,
       blacklisted: {
         stringifyMe: 'stringify',
@@ -48,20 +51,25 @@ describe('Intercom', function(){
     test
       .name('Intercom')
       .endpoint('https://api-segment.intercom.io')
-      .ensure('settings.apiKey')
-      .ensure('settings.appId')
+      .ensure(function(msg, settings){
+        if (settings.oauth && settings.oauth['access-token']) return;
+        if (settings.apiKey && settings.appId) return;
+        return this.invalid('.apiKey and .appId is required if .oauth.access-token is absent');
+      })
       .channels(['server']);
   });
 
   describe('.validate()', function(){
 
-    it('should be invalid if .appId is missing', function(){
+    it('should be invalid if .appId and .oauth.access-token is missing', function(){
       delete settings.appId;
+      delete settings.oauth;
       test.invalid({}, settings);
     });
 
-    it('should be invalid if .apiKey is missing', function(){
+    it('should be invalid if .apiKey and .oauth.access-token is missing', function(){
       delete settings.apiKey;
+      delete settings.oauth;
       test.invalid({}, settings);
     });
 
@@ -77,7 +85,18 @@ describe('Intercom', function(){
       test.valid({ properties: { email: 'foo@bar.com' } }, settings);
     });
 
-    it('should be valid when .apiKey and .appId are given', function(){
+    it('should be valid when .apiKey and .appId are given with no access-token', function(){
+      delete settings.oauth;
+      test.valid({ userId: '12345' }, settings);
+    });
+
+    it('should be valid when .oauth[\'access-token\'] is given with no .apiKey or .appId', function(){
+      delete settings.appId;
+      delete settings.apiKey;
+      test.valid({ userId: '12345' }, settings);
+    });
+
+    it('should be valid when .apiKey, .appId, and .oauth[\'access-token\'] are given', function(){
       test.valid({ userId: '12345' }, settings);
     });
   });
@@ -240,7 +259,7 @@ describe('Intercom', function(){
         .sends(json.output)
         .expects(200)
         .end(done);
-      
+
     });
 
     it('should let you set drop as the default method for handling nested objects', function(done) {
