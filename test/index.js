@@ -30,7 +30,7 @@ describe('Intercom', function(){
       appId: 'fcxywseo',
       apiKey: '9d068fa090d38be4c715b669b3f1370f76ac5306',
       oauth: {
-        'access-token': 'ACCESSTOKENHERE'
+        'access-token': 'dG9rOjdjOTFmNDEyX2I1YWZfNDMwZF9hNDVlX2U2OWVlNzc5NTgyZToxOjA=' // Test-Han - Segment Friends
       },
       collectContext: false,
       blacklisted: {
@@ -51,11 +51,6 @@ describe('Intercom', function(){
     test
       .name('Intercom')
       .endpoint('https://api-segment.intercom.io')
-      .ensure(function(msg, settings){
-        if (settings.oauth && settings.oauth['access-token']) return;
-        if (settings.apiKey && settings.appId) return;
-        return this.invalid('.apiKey and .appId is required if .oauth.access-token is absent');
-      })
       .channels(['server']);
   });
 
@@ -355,7 +350,7 @@ describe('Intercom', function(){
 
     it('should error on invalid creds', function(done){
       test
-        .set({ apiKey: 'x' })
+        .set({ oauth: {'access-token': 'x' }})
         .identify({})
         .error('Unauthorized', done);
     });
@@ -645,7 +640,7 @@ describe('Intercom', function(){
 
     it('should error on invalid creds', function(done){
       test
-        .set({ apiKey: 'x' })
+        .set({ oauth: {'access-token': 'x' }})
         .track({})
         .error('Unauthorized', done);
     });
