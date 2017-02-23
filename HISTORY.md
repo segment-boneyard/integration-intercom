@@ -1,4 +1,9 @@
 
+2.4.0 / 2017-02-23
+==================
+
+  * Add option to use access-token to authenticate, falling back to api key
+
 2.3.1 / 2017-02-16
 ==================
 
@@ -21,7 +26,7 @@ segmentio-integration version, upgrade integration-worker version, etc.)
 2.1.2 / 2017-01-05
 ===================
 
-  * Handle error in case of error from Intercom API 
+  * Handle error in case of error from Intercom API
 
 2.1.1 / 2016-12-20
 ===================
