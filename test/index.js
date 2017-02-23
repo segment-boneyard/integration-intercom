@@ -28,6 +28,9 @@ describe('Intercom', function(){
     settings = {
       appId: 'a3vy8ufv',
       apiKey: '4ed539b9c0193de8e75bcb00a357cac54db90902',
+      oauth: {
+        'access-token': 'dG9rOjdjOTFmNDEyX2I1YWZfNDMwZF9hNDVlX2U2OWVlNzc5NTgyZToxOjA=' // Test-Han - Segment Friends
+      },
       collectContext: false,
       blacklisted: {
         stringifyMe: 'stringify',
@@ -47,8 +50,6 @@ describe('Intercom', function(){
     test
       .name('Intercom')
       .endpoint('https://api-segment.intercom.io')
-      .ensure('settings.apiKey')
-      .ensure('settings.appId')
       .channels(['server']);
   });
 
@@ -261,7 +262,7 @@ describe('Intercom', function(){
         .sends(json.output)
         .expects(200)
         .end(done);
-      
+
     });
 
     it('should let you set drop as the default method for handling nested objects', function(done) {
@@ -396,7 +397,7 @@ describe('Intercom', function(){
 
     it('should error on invalid creds', function(done){
       test
-        .set({ apiKey: 'x' })
+        .set({ oauth: {'access-token': 'x' }})
         .track({})
         .error('Unauthorized', done);
     });
