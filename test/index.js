@@ -226,7 +226,7 @@ describe('Intercom', function(){
 
     it('should error on invalid creds', function(done){
       test
-        .set({ apiKey: 'x' })
+        .set({ oauth: {'access-token': 'x' }})
         .identify({})
         .error('Unauthorized', done);
     });
