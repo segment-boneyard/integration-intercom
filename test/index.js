@@ -338,7 +338,6 @@ describe('Intercom', function(){
       var group = test.fixture('group-basic');
       test.group(group.input);
       test.requests(2);
-      console.log(settings)
       test
         .set(settings)
         .request(0)
