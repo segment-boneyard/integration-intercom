@@ -29,7 +29,7 @@ describe('Intercom', function(){
       appId: 'fcxywseo',
       apiKey: '9d068fa090d38be4c715b669b3f1370f76ac5306',
       oauth: {
-        'access-token': 'dG9rOjdjOTFmNDEyX2I1YWZfNDMwZF9hNDVlX2U2OWVlNzc5NTgyZToxOjA=' // Test-Han - Segment Friends
+        'access-token': 'dG9rOjM1YWYyNDQ4X2RmNDNfNDExMV85MTk4XzkwZDhlZmYxOGI5MToxOjA=' // Test-Han - Segment Friends
       },
       collectContext: false,
       blacklisted: {
