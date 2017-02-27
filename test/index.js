@@ -26,8 +26,11 @@ describe('Intercom', function(){
   beforeEach(function(){
     payload = {};
     settings = {
-      appId: 'a3vy8ufv',
-      apiKey: '4ed539b9c0193de8e75bcb00a357cac54db90902',
+      appId: 'fcxywseo',
+      apiKey: '9d068fa090d38be4c715b669b3f1370f76ac5306',
+      oauth: {
+        'access-token': 'dG9rOjM1YWYyNDQ4X2RmNDNfNDExMV85MTk4XzkwZDhlZmYxOGI5MToxOjA=' // Test-Han - Segment Friends
+      },
       collectContext: false,
       blacklisted: {
         stringifyMe: 'stringify',
@@ -47,20 +50,20 @@ describe('Intercom', function(){
     test
       .name('Intercom')
       .endpoint('https://api-segment.intercom.io')
-      .ensure('settings.apiKey')
-      .ensure('settings.appId')
       .channels(['server']);
   });
 
   describe('.validate()', function(){
 
-    it('should be invalid if .appId is missing', function(){
+    it('should be invalid if .appId and .oauth.access-token is missing', function(){
       delete settings.appId;
+      delete settings.oauth;
       test.invalid({}, settings);
     });
 
-    it('should be invalid if .apiKey is missing', function(){
+    it('should be invalid if .apiKey and .oauth.access-token is missing', function(){
       delete settings.apiKey;
+      delete settings.oauth;
       test.invalid({}, settings);
     });
 
@@ -76,7 +79,18 @@ describe('Intercom', function(){
       test.valid({ properties: { email: 'foo@bar.com' } }, settings);
     });
 
-    it('should be valid when .apiKey and .appId are given', function(){
+    it('should be valid when .apiKey and .appId are given with no access-token', function(){
+      delete settings.oauth;
+      test.valid({ userId: '12345' }, settings);
+    });
+
+    it('should be valid when .oauth[\'access-token\'] is given with no .apiKey or .appId', function(){
+      delete settings.appId;
+      delete settings.apiKey;
+      test.valid({ userId: '12345' }, settings);
+    });
+
+    it('should be valid when .apiKey, .appId, and .oauth[\'access-token\'] are given', function(){
       test.valid({ userId: '12345' }, settings);
     });
   });
@@ -225,7 +239,7 @@ describe('Intercom', function(){
 
     it('should error on invalid creds', function(done){
       test
-        .set({ apiKey: 'x' })
+        .set({ oauth: {'access-token': 'x' }})
         .identify({})
         .error('Unauthorized', done);
     });
@@ -261,7 +275,7 @@ describe('Intercom', function(){
         .sends(json.output)
         .expects(200)
         .end(done);
-      
+
     });
 
     it('should let you set drop as the default method for handling nested objects', function(done) {
@@ -396,7 +410,7 @@ describe('Intercom', function(){
 
     it('should error on invalid creds', function(done){
       test
-        .set({ apiKey: 'x' })
+        .set({ oauth: {'access-token': 'x' }})
         .track({})
         .error('Unauthorized', done);
     });
