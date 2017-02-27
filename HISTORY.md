@@ -1,4 +1,9 @@
 
+1.2.0 / 2017-02-27
+==================
+
+  * Add option to use access-token to authenticate, falling back to api key
+
 1.1.21 / 2017-02-16
 ===================
 
