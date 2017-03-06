@@ -2,7 +2,7 @@
   "name": "@segment/integration-intercom",
   "version": "2.4.1",
   "integration-version": "2016-11-07",
-  "private": true,
+  
   "description": "Intercom server-side integration",
   "author": "Segment <friends@segment.com>",
   "repository": {
